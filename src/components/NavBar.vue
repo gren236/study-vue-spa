@@ -5,12 +5,21 @@
             <a class="navbar-brand" href="#">My Vue</a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li v-for="(page, index) in pages" class="nav-item" :key="index">
-                        <NavBarLink
-                            :page="page"
-                            :isActive="activePage === index"
-                            @click.prevent="navLinkClick(index)"
-                        ></NavBarLink>
+                    <NavBarLink
+                        v-for="(page, index) in publishedPages" class="nav-item" :key="index"
+                        :page="page"
+                        :index="index"
+                    ></NavBarLink>
+
+                    <li>
+                        <router-link
+                            to="/create"
+                            class="nav-link"
+                            aria-current="page"
+                            active-class="active"
+                        >
+                            Create Page
+                        </router-link>
                     </li>
                 </ul>
                 <form class="d-flex">
@@ -30,11 +39,18 @@ export default {
     },
     created() {
         this.getThemeSetting()
+
+        this.pages = this.$pages.getAllPages()
     },
-    props: ['pages', 'activePage', 'navLinkClick'],
+    computed: {
+        publishedPages() {
+            return this.pages.filter(p => p.published)
+        }
+    },
     data() {
         return {
             theme: 'dark',
+            pages: []
         }
     },
     methods: {
