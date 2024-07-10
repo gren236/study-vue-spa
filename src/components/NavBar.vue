@@ -13,13 +13,11 @@
 
                     <li>
                         <router-link
-                            to="/create"
+                            to="/pages"
                             class="nav-link"
                             aria-current="page"
                             active-class="active"
-                        >
-                            Create Page
-                        </router-link>
+                        >Pages</router-link>
                     </li>
                 </ul>
                 <form class="d-flex">
@@ -37,10 +35,23 @@ export default {
     components: {
         NavBarLink
     },
+    inject: ['$pages', '$bus'],
     created() {
         this.getThemeSetting()
 
         this.pages = this.$pages.getAllPages()
+
+        this.$bus.$on('page-updated', () => {
+            this.pages = [...this.$pages.getAllPages()]
+        })
+
+        this.$bus.$on('page-created', () => {
+            this.pages = [...this.$pages.getAllPages()]
+        })
+
+        this.$bus.$on('page-deleted', () => {
+            this.pages = [...this.$pages.getAllPages()]
+        })
     },
     computed: {
         publishedPages() {
