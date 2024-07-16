@@ -1,17 +1,26 @@
 <script setup lang="ts">
 import Job from '@/types/Job'
+import OrderTerm from '@/types/OrderTerm'
+import { computed } from 'vue'
 
-defineProps<{
-    jobs: Job[]
+const props = defineProps<{
+    jobs: Job[],
+    order: OrderTerm
 }>()
+
+const orderedJobs = computed(() => {
+    return [...props.jobs].sort((a: Job, b: Job) => a[props.order] > b[props.order] ? 1 : -1)
+})
 </script>
 
 <template>
     <div class="job-list">
-        <ul>
-            <li v-for="job in jobs" :key="job.id">
+        <p>Ordered by {{ order }}</p>
+        <transition-group name="list" tag="ul">
+            <li v-for="job in orderedJobs" :key="job.id">
                 <h2>{{ job.title }} in {{ job.location }}</h2>
                 <div class="salary">
+                    <img src="../assets/rupee.svg" alt="rupee">
                     <p>{{ job.salary }} rupees</p>
                 </div>
                 <div class="description">
@@ -22,7 +31,7 @@ defineProps<{
                     </p>
                 </div>
             </li>
-        </ul>
+        </transition-group>
     </div>
 </template>
 
@@ -61,5 +70,9 @@ defineProps<{
     color: #17bf66;
     font-weight: bold;
     margin: 10px 4px;
+}
+
+.list-move {
+    transition: all 1s;
 }
 </style>
